@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Counter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f9;
+        }
+
+        .card {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 300px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .counter-display {
+            font-size: 48px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 20px 0;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        button {
+            flex: 1;
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .btn-add { background-color: #2ecc71; color: white; }
+        .btn-add:hover { background-color: #27ae60; }
+
+        .btn-subtract { background-color: #e74c3c; color: white; }
+        .btn-subtract:hover { background-color: #c0392b; }
+
+        .btn-reset { background-color: #95a5a6; color: white; }
+        .btn-reset:hover { background-color: #7f8c8d; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1>Counter App</h1>
+        <div class="counter-display" id="count">0</div>
+        <div class="button-group">
+            <button class="btn-subtract" onclick="updateCounter(-1)">-1</button>
+            <button class="btn-reset" onclick="resetCounter()">Reset</button>
+            <button class="btn-add" onclick="updateCounter(1)">+1</button>
+        </div>
+    </div>
+
+    <script>
+        let count = 0;
+        const countDisplay = document.getElementById('count');
+
+        function updateCounter(value) {
+            count += value;
+            countDisplay.innerText = count;
+        }
+
+        function resetCounter() {
+            count = 0;
+            countDisplay.innerText = count;
+        }
+    </script>
+
+</body>
+</html>
