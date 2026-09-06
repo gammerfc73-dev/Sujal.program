@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>J.A.R.V.I.S. Interface</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #050b14;
+            color: #00f0ff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .arc-reactor {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 4px solid #00f0ff;
+            box-shadow: 0 0 20px #00f0ff, inset 0 0 20px #00f0ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 40px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .arc-reactor:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 35px #00f0ff, inset 0 0 35px #00f0ff;
+        }
+
+        .core {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(0, 240, 255, 0.2);
+            border: 2px dashed #00f0ff;
+            animation: spin 10s linear infinite;
+        }
+
+        .status {
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .output-box {
+            width: 80%;
+            max-width: 600px;
+            background: rgba(0, 20, 40, 0.6);
+            border: 1px solid #00f0ff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+            min-height: 80px;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="arc-reactor" onclick="startListening()">
+        <div class="core"></div>
+    </div>
+
+    <div class="status" id="status-text">Click the Arc Reactor to Speak</div>
+    <div class="output-box" id="output">System ready, boss.</div>
+
+    <script>
+        const statusText = document.getElementById('status-text');
+        const output = document.getElementById('output');
+
+        // Check if browser supports Web Speech API
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+        if (SpeechRecognition) {
+            const recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.lang = 'en-US';
+
+            function startListening() {
+                recognition.start();
+                statusText.innerText = "Listening...";
+            }
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript.toLowerCase();
+                output.innerText = `You: "${transcript}"`;
+                statusText.innerText = "Processing...";
+                
+                setTimeout(() => {
+                    handleCommand(transcript);
+                }, 500);
+            };
+
+            recognition.onerror = (event) => {
+                statusText.innerText = "Error recognizing speech.";
+            };
+
+            recognition.onend = () => {
+                if (statusText.innerText === "Listening...") {
+                    statusText.innerText = "Click to Speak";
+                }
+            };
+        } else {
+            statusText.innerText = "Speech Recognition Not Supported in this Browser";
+        }
+
+        // Response Logic
+        function speak(text) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 1;
+            utterance.pitch = 0.9; // Lower pitch to sound like Jarvis
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function handleCommand(command) {
+            let response = "I am not sure how to help with that, boss.";
+
+            if (command.includes("hello") || command.includes("hi")) {
+                response = "At your service, boss.";
+            } else if (command.includes("who are you")) {
+                response = "I am JARVIS, your personal artificial intelligence.";
+            } else if (command.includes("time")) {
+                const now = new Date();
+                response = `The current time is ${now.toLocaleTimeString()}`;
+            } else if (command.includes("date")) {
+                const now = new Date();
+                response = `Today's date is ${now.toLocaleDateString()}`;
+            } else if (command.includes("open google")) {
+                response = "Opening Google now.";
+                window.open("https://www.google.com", "_blank");
+            } else if (command.includes("clear")) {
+                response = "Display cleared.";
+            }
+
+            output.innerText = `JARVIS: "${response}"`;
+            statusText.innerText = "Click the Arc Reactor to Speak";
+            speak(response);
+        }
+    </script>
+</body>
+</html>
